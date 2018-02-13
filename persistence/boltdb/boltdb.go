@@ -60,7 +60,7 @@ func (b *boltDB) GetById(id image.Id) *image.Image {
 
 		reader := bytes.NewReader(result)
 		decoder := gob.NewDecoder(reader)
-		decoder.Decode(img)
+		decoder.Decode(&img)
 
 		return nil
 	})

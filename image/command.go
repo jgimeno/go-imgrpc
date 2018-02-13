@@ -1,6 +1,9 @@
 package image
 
-import "github.com/satori/go.uuid"
+import (
+	"github.com/satori/go.uuid"
+	"fmt"
+)
 
 type SaveImageCommand struct {
 	P Persistence
@@ -21,6 +24,8 @@ type GetImageCommand struct {
 func (c *GetImageCommand) GetImage(imageId string) *Image {
 	id := Id(imageId)
 	image := c.P.GetById(id)
+
+	fmt.Printf("%v", image.Data)
 
 	return image
 }

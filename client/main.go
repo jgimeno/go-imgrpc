@@ -13,6 +13,8 @@ import (
 
 var (
 	ErrMissingFileName = errors.New("Missing image filename.")
+	ErrMissingImageId  = errors.New("Missing image id.")
+	ErrConnectingMS    = errors.New("Error connecting to microservice.")
 )
 
 func main() {
@@ -20,9 +22,9 @@ func main() {
 
 	app.Commands = []cli.Command{
 		{
-			Name: "save",
+			Name:    "save",
 			Aliases: []string{"s"},
-			Usage: "Save an image in the microservice",
+			Usage:   "Save an image in the microservice",
 			Action: func(c *cli.Context) error {
 				fileName := c.Args().First()
 
@@ -30,12 +32,12 @@ func main() {
 					return ErrMissingFileName
 				}
 
-				conn, err := grpc.Dial(":8080", grpc.WithInsecure())
+				conn, err := connectMicroservice()
 				if err != nil {
-					return ErrMissingFileName
+					return err
 				}
-
 				defer conn.Close()
+
 				client := protocolbuffer.NewImageServiceClient(conn)
 
 				imgBytes, _ := ioutil.ReadFile(fileName)
@@ -46,15 +48,36 @@ func main() {
 
 				id, _ := client.SaveImage(context.Background(), img)
 				fmt.Printf(id.Id)
+
 				return nil
 			},
 		},
 		{
-			Name: "get",
+			Name:    "get",
 			Aliases: []string{"g"},
-			Usage: "Use to get the files by id.",
+			Usage:   "Use to get the files by id.",
 			Action: func(c *cli.Context) error {
-				fmt.Print("Getting the file.")
+				if len(c.Args()) < 1 {
+					return ErrMissingImageId
+				}
+
+				conn, err := connectMicroservice()
+				if err != nil {
+					return ErrConnectingMS
+				}
+				defer conn.Close()
+
+				client := protocolbuffer.NewImageServiceClient(conn)
+
+				id := &protocolbuffer.ImageId{Id: c.Args().First()}
+
+				img, err := client.GetImage(context.Background(), id)
+				if err != nil {
+					return errors.New("Error getting the image." + err.Error())
+				}
+
+				ioutil.WriteFile("prueba.jpg", img.Data, 0644)
+
 				return nil
 			},
 		},
@@ -64,4 +87,13 @@ func main() {
 		fmt.Println("Error: " + err.Error())
 		os.Exit(1)
 	}
+}
+
+func connectMicroservice() (*grpc.ClientConn, error) {
+	conn, err := grpc.Dial(":8080", grpc.WithInsecure())
+	if err != nil {
+		return nil, ErrConnectingMS
+	}
+
+	return conn, nil
 }
