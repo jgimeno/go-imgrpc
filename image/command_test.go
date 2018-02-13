@@ -35,7 +35,6 @@ func instanceId(id image.Id) {}
 
 func TestGetImageCommand(t *testing.T) {
 	p := mocks.Persistence{}
-
 	cmd := image.GetImageCommand{&p}
 
 	fakeImage := &image.Image{}
