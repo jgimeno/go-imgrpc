@@ -16,7 +16,7 @@ type ImageService struct {
 
 func (is *ImageService) SaveImage(c context.Context, pImg *protocolbuffer.Image) (*protocolbuffer.ImageId, error) {
 	cmd := image.SaveImageCommand{P: is.p}
-	id := cmd.SaveImage(pImg.Data)
+	id := cmd.SaveImage(pImg.Data, pImg.Type)
 
 	return &protocolbuffer.ImageId{Id:string(id)}, nil
 }
@@ -29,6 +29,7 @@ func (is *ImageService) GetImage(c context.Context, pImg *protocolbuffer.ImageId
 	return &protocolbuffer.Image{
 		Id: string(img.Id),
 		Data: img.Data,
+		Type: img.Type,
 	}, nil
 }
 

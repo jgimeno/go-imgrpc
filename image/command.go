@@ -9,9 +9,9 @@ type SaveImageCommand struct {
 	P Persistence
 }
 
-func (c *SaveImageCommand) SaveImage(image []byte) Id {
+func (c *SaveImageCommand) SaveImage(image []byte, fileType string) Id {
 	var id = Id(uuid.NewV1().String())
-	i := New(id, image)
+	i := New(id, image, fileType)
 	c.P.Save(i)
 
 	return id

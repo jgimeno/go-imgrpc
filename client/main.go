@@ -9,12 +9,13 @@ import (
 	"os"
 	"github.com/pkg/errors"
 	"fmt"
+	"path"
 )
 
 var (
 	ErrMissingFileName = errors.New("Missing image filename.")
 	ErrMissingImageId  = errors.New("Missing image id.")
-	ErrConnectingMS    = errors.New("Error connecting to microservice.")
+	ErrConnectingMS    = errors.New("Error connecting to Microservice.")
 )
 
 func main() {
@@ -44,6 +45,7 @@ func main() {
 
 				img := &protocolbuffer.Image{
 					Data: imgBytes,
+					Type: path.Ext(fileName),
 				}
 
 				id, _ := client.SaveImage(context.Background(), img)
@@ -76,7 +78,7 @@ func main() {
 					return errors.New("Error getting the image." + err.Error())
 				}
 
-				ioutil.WriteFile("prueba.jpg", img.Data, 0644)
+				ioutil.WriteFile("prueba" + img.Type, img.Data, 0644)
 
 				return nil
 			},

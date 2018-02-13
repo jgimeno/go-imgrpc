@@ -28,7 +28,7 @@ func TestSaveImageCommand(t *testing.T) {
 		},
 	))
 
-	cmd.SaveImage(img)
+	cmd.SaveImage(img, "jpg")
 }
 
 func instanceId(id image.Id) {}
