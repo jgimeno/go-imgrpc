@@ -15,10 +15,10 @@ func (c *SaveImageCommand) SaveImage(image []byte) Id {
 }
 
 type GetImageCommand struct {
-	p Persistence
+	P Persistence
 }
 
-func (c *SaveImageCommand) GetImage(imageId string) *Image {
+func (c *GetImageCommand) GetImage(imageId string) *Image {
 	id := Id(imageId)
 	image := c.P.GetById(id)
 

@@ -7,6 +7,7 @@ import (
 	"bytes"
 	"github.com/jgimeno/go-imgrpc/image"
 	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestSaveImageCommand(t *testing.T) {
@@ -31,3 +32,16 @@ func TestSaveImageCommand(t *testing.T) {
 }
 
 func instanceId(id image.Id) {}
+
+func TestGetImageCommand(t *testing.T) {
+	p := mocks.Persistence{}
+
+	cmd := image.GetImageCommand{&p}
+
+	fakeImage := &image.Image{}
+	p.On("GetById", image.Id("theImageId")).Return(fakeImage)
+
+	img := cmd.GetImage("theImageId")
+
+	assert.Equal(t, fakeImage, img)
+}
