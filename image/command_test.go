@@ -7,7 +7,6 @@ import (
 	"bytes"
 	"github.com/jgimeno/go-imgrpc/image"
 	"github.com/stretchr/testify/mock"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestSaveImageCommand(t *testing.T) {
@@ -33,14 +32,46 @@ func TestSaveImageCommand(t *testing.T) {
 
 func instanceId(id image.Id) {}
 
-func TestGetImageCommand(t *testing.T) {
+func TestGetImage(t *testing.T) {
 	p := mocks.Persistence{}
 	cmd := image.GetImageCommand{&p}
 
-	fakeImage := &image.Image{}
-	p.On("GetById", image.Id("theImageId")).Return(fakeImage)
+	baseImgData, err := ioutil.ReadFile("files/gopher.jpg")
+	if err != nil {
+		t.Fatal("Error loading image jpg")
+	}
 
-	img := cmd.GetImage("theImageId")
+	convertedImageData, err := ioutil.ReadFile("files/gopher.png")
+	if err != nil {
+		t.Fatal("Error loading image png")
+	}
 
-	assert.Equal(t, fakeImage, img)
+	returnImg := &image.Image{
+		Data: baseImgData,
+		Type: "jpg",
+	}
+
+	t.Run("We get the image without conversion when it is nil", func(t *testing.T) {
+		p.On("GetById", image.Id("theImageId")).Return(returnImg)
+		img, err := cmd.GetImage("theImageId", nil)
+		if err != nil {
+			t.Fatal("Error getting the image.")
+		}
+
+		if !bytes.Equal(baseImgData, img.Data) {
+			t.Fatal("Error asserting that image is not being converted.")
+		}
+	})
+
+	t.Run("We get the image converted when we set a fileType", func(t *testing.T) {
+		p.On("GetById", image.Id("theImageId")).Return(returnImg)
+		img, err := cmd.GetImage("theImageId", "png")
+		if err != nil {
+			t.Fatal("Error getting the converted image.")
+		}
+
+		if !bytes.Equal(convertedImageData, img.Data) {
+			t.Fatal("Error asserting that image is being converted.")
+		}
+	})
 }

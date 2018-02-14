@@ -20,21 +20,20 @@ type GetImageCommand struct {
 	P Persistence
 }
 
-func (c *GetImageCommand) GetImage(imageId string) *Image {
-	id := Id(imageId)
-	image := c.P.GetById(id)
-	return image
-}
+func (c *GetImageCommand) GetImage(imageId string, fileType interface{}) (*Image, error) {
+	var image *Image
+	var err error
 
-func (c *GetImageCommand) GetImageWithType(imageId string, fileType string) (*Image, error) {
 	id := Id(imageId)
-	image := c.P.GetById(id)
+	image = c.P.GetById(id)
 
-	tImg, err := image.TransformTo(fileType)
-	if err != nil {
-		return nil, err
+	if fileType != nil {
+		image, err = image.TransformTo(fileType.(string))
+		if err != nil {
+			return nil, err
+		}
 	}
 
-	return tImg, nil
+	return image, nil
 }
 
