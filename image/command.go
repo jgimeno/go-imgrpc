@@ -26,10 +26,15 @@ func (c *GetImageCommand) GetImage(imageId string) *Image {
 	return image
 }
 
-func (c *GetImageCommand) GetImageWithType(imageId string, fileType string) *Image {
+func (c *GetImageCommand) GetImageWithType(imageId string, fileType string) (*Image, error) {
 	id := Id(imageId)
 	image := c.P.GetById(id)
 
-	return image
+	tImg, err := image.TransformTo(fileType)
+	if err != nil {
+		return nil, err
+	}
+
+	return tImg, nil
 }
 
