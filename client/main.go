@@ -83,7 +83,7 @@ func main() {
 					return errors.New("Error getting the image." + err.Error())
 				}
 
-				ioutil.WriteFile("prueba." + img.Type, img.Data, 0644)
+				ioutil.WriteFile("file." + img.Type, img.Data, 0644)
 
 				return nil
 			},
