@@ -4,12 +4,17 @@ package protocolbuffer;
 
 message ImageId {
     string id = 1;
+    string type = 2;
 }
 
 message Image {
     string id = 1;
     string type = 2;
     bytes data = 3;
+}
+
+message FileType {
+    string type = 1;
 }
 
 service ImageService {

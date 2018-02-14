@@ -24,7 +24,7 @@ func (is *ImageService) SaveImage(c context.Context, pImg *protocolbuffer.Image)
 func (is *ImageService) GetImage(c context.Context, pImg *protocolbuffer.ImageId) (*protocolbuffer.Image, error) {
 	cmd := image.GetImageCommand{P: is.p}
 
-	img, err := cmd.GetImage(pImg.Id, nil)
+	img, err := cmd.GetImage(pImg.Id, pImg.Type)
 	if err != nil {
 		return nil, err
 	}

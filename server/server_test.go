@@ -52,9 +52,15 @@ func TestMicroservice(t *testing.T) {
 		t.Fatal("Error opening jpg image.")
 	}
 
+	convertedImageData, err := ioutil.ReadFile("files/gopher.png")
+	if err != nil {
+		t.Fatal("Error opening png image.")
+	}
+
 	t.Run("We can upload an image and get an id", func(t *testing.T) {
 		pImg := &protocolbuffer.Image{
 			Data: initImage,
+			Type: "jpg",
 		}
 
 		savedImageId, err = c.SaveImage(context.Background(), pImg)
@@ -67,13 +73,26 @@ func TestMicroservice(t *testing.T) {
 		}
 	})
 
-	t.Run("We can get the image by the id", func(t *testing.T) {
+	t.Run("We can get the image by the id without converting.", func(t *testing.T) {
+		savedImageId.Type = "jpg"
 		img, err := c.GetImage(context.Background(), savedImageId)
 		if err != nil {
 			t.Fatal("Failed to get the image from the microservice.")
 		}
 
 		if !bytes.Equal(initImage, img.Data) {
+			t.Fatal("Failed asserting that the image coming from the microservice is the expected one.")
+		}
+	})
+
+	t.Run("We can get the image by the converting it if we use other filetype.", func(t *testing.T) {
+		savedImageId.Type = "png"
+		img, err := c.GetImage(context.Background(), savedImageId)
+		if err != nil {
+			t.Fatal("Failed to get the image from the microservice.")
+		}
+
+		if !bytes.Equal(convertedImageData, img.Data) {
 			t.Fatal("Failed asserting that the image coming from the microservice is the expected one.")
 		}
 	})
