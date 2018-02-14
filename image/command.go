@@ -2,7 +2,6 @@ package image
 
 import (
 	"github.com/satori/go.uuid"
-	"fmt"
 )
 
 type SaveImageCommand struct {
@@ -24,8 +23,13 @@ type GetImageCommand struct {
 func (c *GetImageCommand) GetImage(imageId string) *Image {
 	id := Id(imageId)
 	image := c.P.GetById(id)
+	return image
+}
 
-	fmt.Printf("%v", image.Data)
+func (c *GetImageCommand) GetImageWithType(imageId string, fileType string) *Image {
+	id := Id(imageId)
+	image := c.P.GetById(id)
 
 	return image
 }
+
