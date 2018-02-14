@@ -45,7 +45,7 @@ func main() {
 
 				img := &protocolbuffer.Image{
 					Data: imgBytes,
-					Type: path.Ext(fileName),
+					Type: path.Ext(fileName)[1:],
 				}
 
 				id, _ := client.SaveImage(context.Background(), img)
@@ -73,12 +73,17 @@ func main() {
 
 				id := &protocolbuffer.ImageId{Id: c.Args().First()}
 
+				var fileType string
+				if fileType = c.Args().Get(1); fileType != "" {
+					id.Type = fileType
+				}
+
 				img, err := client.GetImage(context.Background(), id)
 				if err != nil {
 					return errors.New("Error getting the image." + err.Error())
 				}
 
-				ioutil.WriteFile("prueba" + img.Type, img.Data, 0644)
+				ioutil.WriteFile("prueba." + img.Type, img.Data, 0644)
 
 				return nil
 			},
