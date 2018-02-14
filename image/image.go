@@ -42,17 +42,31 @@ func (i *Image) TransformTo(fileType string) (*Image, error) {
 	}
 
 	var srcImg image2.Image
-		srcImg, err := jpeg.Decode(bytes.NewReader(i.Data))
+	var err error
+	if i.Type == "jpg" {
+		srcImg, err = jpeg.Decode(bytes.NewReader(i.Data))
 		if err != nil {
 			return nil, err
 		}
+	} else if i.Type == "png" {
+		srcImg, err = png.Decode(bytes.NewReader(i.Data))
+		if err != nil {
+			return nil, err
+		}
+	}
 
 	var tData []byte
 	b := bytes.NewBuffer(tData)
-	png.Encode(b, srcImg)
+
+	switch fileType {
+	case "png":
+		png.Encode(b, srcImg)
+	case "jpg":
+		jpeg.Encode(b, srcImg, nil)
+	}
 
 	convertedImg := &Image{
-		Type: "png",
+		Type: fileType,
 		Data: b.Bytes(),
 	}
 

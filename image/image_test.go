@@ -18,6 +18,16 @@ func TestAnImageCanBeConvertedToOtherFileTypes(t *testing.T) {
 		Type: "jpg",
 	}
 
+	data, err = ioutil.ReadFile("files/beatles.png")
+	if err != nil {
+		t.Fatal("Error opening png file.")
+	}
+
+	pngImg := Image{
+		Data:data,
+		Type:"png",
+	}
+
 	t.Run("It cannot converted to an unsupported type.", func(t *testing.T) {
 		_, err := jpgImg.TransformTo("xls")
 		if err != ErrUnsupportedType {
@@ -28,7 +38,7 @@ func TestAnImageCanBeConvertedToOtherFileTypes(t *testing.T) {
 	t.Run("It can convert an jpg image to a png", func(t *testing.T) {
 		tImage, err := jpgImg.TransformTo("png")
 		if err != nil {
-			t.Fatal("Error converting image.")
+			t.Fatal("Error transforming image.")
 		}
 
 		dataPngImage, err := ioutil.ReadFile("files/gopher.png")
@@ -41,5 +51,19 @@ func TestAnImageCanBeConvertedToOtherFileTypes(t *testing.T) {
 		}
 
 		assert.Equal(t, "png", tImage.Type)
+	})
+
+	t.Run("It can convert a png image to jpg.", func(t *testing.T) {
+		tImage, err := pngImg.TransformTo("jpg")
+		if err != nil {
+			t.Fatal("Error transforming image.")
+		}
+
+		dataJpgImage, err := ioutil.ReadFile("files/beatles.jpg")
+		if !bytes.Equal(dataJpgImage, tImage.Data) {
+			t.Fatal("Error converting file to jpg.")
+		}
+
+		assert.Equal(t, "jpg", tImage.Type)
 	})
 }
