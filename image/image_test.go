@@ -4,6 +4,7 @@ import (
 	"testing"
 	"io/ioutil"
 	"bytes"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestAnImageCanBeConvertedToOtherFileTypes(t *testing.T) {
@@ -38,5 +39,7 @@ func TestAnImageCanBeConvertedToOtherFileTypes(t *testing.T) {
 		if !bytes.Equal(dataPngImage, tImage.Data) {
 			t.Fatal("Error converting file to png.")
 		}
+
+		assert.Equal(t, "png", tImage.Type)
 	})
 }
