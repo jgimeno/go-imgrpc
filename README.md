@@ -17,3 +17,8 @@ go run client/main.go get 6fe9c852-1190-11e8-9375-7200063ff500 png
 ```
 
 It only supports jpg and png for now.
+
+Running the tests:
+```
+go test ./...
+```
